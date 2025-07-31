@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成式AI新聞英語課程</title>
+    <!-- 
+      NOTE: The Tailwind CSS CDN is used for development and demonstration purposes.
+      For production, it's recommended to install Tailwind CSS as a PostCSS plugin 
+      or use the Tailwind CLI for better performance and optimization.
+      https://tailwindcss.com/docs/installation
+    -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+        }
+        .lesson-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #334155;
+        }
+        .lesson-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            border-color: #4f46e5;
+        }
+        .active-lesson {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border: 2px solid #a5b4fc;
+            transform: scale(1.03);
+        }
+        .neon-text {
+            text-shadow: 0 0 5px #60a5fa, 0 0 15px #60a5fa, 0 0 25px #60a5fa;
+        }
+        .floating {
+            animation: floating 3.5s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+        .quiz-option {
+            transition: all 0.2s ease-in-out;
+        }
+        .quiz-option:hover {
+            transform: translateX(6px);
+            background-color: #334155;
+        }
+        .quiz-option.selected {
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            border-color: #818cf8;
+        }
+        .quiz-option.correct {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: #34d399;
+        }
+        .quiz-option.incorrect {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-color: #f87171;
+        }
+        .chart-explanation {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(5px);
+            border: 1px solid #475569;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen antialiased">
+    <div id="app" class="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <!-- Header -->
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 neon-text tracking-tight">Generative AI News English</h1>
+            <p class="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto">Master advanced English through real-world AI developments</p>
+        </header>
+
+        <!-- Module Section -->
+        <section class="mb-16">
+            <div class="flex items-center mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center mr-5 shadow-lg">
+                    <i class="fas fa-microchip text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl lg:text-4xl font-bold tracking-tight">生成式AI核心概念</h2>
+                    <p class="text-slate-300 mt-1 text-lg">Core Concepts of Generative AI</p>
+                </div>
+            </div>
+
+            <!-- Lessons Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Lesson 1 -->
+                <div class="lesson-card bg-slate-800 rounded-2xl p-6 shadow-lg" id="lesson-1" onclick="window.selectLesson(1)">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center font-bold text-xl shadow-md">1</div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">基礎知識與常見字彙</h3>
+                    <p class="text-slate-300 mb-4 text-base">學習生成式AI領域的核心術語與基本觀念</p>
+                    <div class="flex items-center text-blue-400 font-semibold">
+                        <i class="far fa-clock mr-2"></i>
+                        <span>15 min</span>
+                    </div>
+                </div>
+
+                <!-- Lesson 2 -->
+                <div class="lesson-card bg-slate-800 rounded-2xl p-6 shadow-lg" id="lesson-2" onclick="window.selectLesson(2)">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center font-bold text-xl shadow-md">2</div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Multimodal AI Systems</h3>
+                    <p class="text-slate-300 mb-4 text-base">Understanding AI that processes various data types</p>
+                    <div class="flex items-center text-purple-400 font-semibold">
+                        <i class="far fa-clock mr-2"></i>
+                        <span>18 min</span>
+                    </div>
+                </div>
+
+                <!-- Lesson 3 -->
+                <div class="lesson-card bg-slate-800 rounded-2xl p-6 shadow-lg" id="lesson-3" onclick="window.selectLesson(3)">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center font-bold text-xl shadow-md">3</div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Ethical AI Development</h3>
+                    <p class="text-slate-300 mb-4 text-base">Examining responsible practices in AI deployment</p>
+                    <div class="flex items-center text-green-400 font-semibold">
+                        <i class="far fa-clock mr-2"></i>
+                        <span>20 min</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lesson Content Area -->
+        <section class="bg-slate-800/50 backdrop-filter backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-2xl mb-12 border border-slate-700 min-h-[300px]" id="lesson-content">
+            <div class="text-center py-12 flex flex-col items-center justify-center h-full">
+                <div class="w-28 h-28 mx-auto mb-8 bg-slate-700 rounded-full flex items-center justify-center floating">
+                    <i class="fas fa-robot text-5xl text-blue-400"></i>
+                </div>
+                <h3 class="text-3xl font-bold mb-4">Select a Lesson to Begin</h3>
+                <p class="text-slate-300 max-w-md mx-auto text-lg">Choose one of the lessons above to start your learning journey.</p>
+            </div>
+        </section>
+
+        <!-- Visualization Section -->
+        <section class="bg-slate-800/50 backdrop-filter backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-2xl mb-12 border border-slate-700" id="visualization-section">
+            <h2 class="text-3xl font-bold mb-6 text-center">AI Development Timeline</h2>
+            <div class="h-72 relative" id="timeline-container">
+                <canvas id="timeline-chart"></canvas>
+            </div>
+            <div class="chart-explanation" id="chart-explanation">
+                <p class="text-slate-200">This timeline shows the exponential growth in AI research publications and the emergence of multimodal models over the past few years. The blue line represents the increasing number of AI research papers, while the purple line shows the rapid development of models that can process multiple types of data simultaneously.</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // State management
+        let currentLesson = null;
+        let quizAnswers = {};
+        let quizSubmitted = {};
+
+        // Quiz questions for each lesson
+        const quizQuestions = {
+            1: [
+                {
+                    question: "What is the primary function of 'Generative AI'?",
+                    options: [
+                        "Analyzing existing data",
+                        "Creating new, original content",
+                        "Storing large databases",
+                        "Improving computer hardware"
+                    ],
+                    correct: 1,
+                    explanation: "Generative AI specializes in producing novel content, such as text, images, or code, rather than just analyzing or organizing existing information."
+                },
+                {
+                    question: "In the context of AI, what is a 'prompt'?",
+                    options: [
+                        "A software bug",
+                        "The AI's final output",
+                        "An instruction given to an AI",
+                        "A type of computer virus"
+                    ],
+                    correct: 2,
+                    explanation: "A prompt is the input, question, or instruction that a user provides to an AI model to guide its generation process and get a desired output."
+                },
+                {
+                    question: "The term 'hallucination' in AI refers to:",
+                    options: [
+                        "The AI model processing images",
+                        "The AI generating incorrect or fabricated information",
+                        "A feature for creating virtual reality",
+                        "A security threat to the model"
+                    ],
+                    correct: 1,
+                    explanation: "An AI 'hallucination' occurs when the model confidently states information that is factually incorrect or completely made up, as it is not grounded in its training data."
+                }
+            ],
+            2: [
+                {
+                    question: "What is 'cross-modal understanding' in multimodal AI systems?",
+                    options: [
+                        "Understanding multiple languages simultaneously",
+                        "Connecting concepts across different data types",
+                        "Processing data in parallel",
+                        "Translating between modalities"
+                    ],
+                    correct: 1,
+                    explanation: "Cross-modal understanding refers to the ability of multimodal systems to connect and relate concepts across different types of data such as text, images, and audio."
+                },
+                {
+                    question: "Which model is known for generating images from text descriptions?",
+                    options: [
+                        "GPT-4",
+                        "BERT",
+                        "DALL-E",
+                        "Whisper"
+                    ],
+                    correct: 2,
+                    explanation: "DALL-E is specifically designed for generating images from text descriptions, making it a prominent example of multimodal AI systems."
+                },
+                {
+                    question: "What is a 'joint embedding space' in multimodal systems?",
+                    options: [
+                        "A shared memory space for all modalities",
+                        "A mathematical representation that unifies different data types",
+                        "A database storing all modalities together",
+                        "A network connection between different models"
+                    ],
+                    correct: 1,
+                    explanation: "A joint embedding space is a mathematical construct that allows different modalities (text, images, etc.) to be represented in a unified space, enabling the system to understand relationships between them."
+                }
+            ],
+            3: [
+                {
+                    question: "What is the primary goal of 'bias mitigation' in AI development?",
+                    options: [
+                        "Eliminating all errors in AI systems",
+                        "Ensuring equitable treatment across different groups",
+                        "Making AI systems faster",
+                        "Reducing computational costs"
+                    ],
+                    correct: 1,
+                    explanation: "Bias mitigation focuses on identifying and reducing unfair treatment or discrimination that AI systems might exhibit toward different demographic groups or categories."
+                },
+                {
+                    question: "What are 'model cards' used for in ethical AI development?",
+                    options: [
+                        "Storing model parameters",
+                        "Documenting capabilities and limitations",
+                        "Creating user interfaces",
+                        "Managing model versions"
+                    ],
+                    correct: 1,
+                    explanation: "Model cards are documentation tools that provide information about an AI model's capabilities, limitations, intended use cases, and potential biases to promote transparency and responsible use."
+                },
+                {
+                    question: "Which of the following is a key principle of ethical AI development?",
+                    options: [
+                        "Maximizing profit",
+                        "Ensuring transparency and explainability",
+                        "Increasing model complexity",
+                        "Minimizing data usage"
+                    ],
+                    correct: 1,
+                    explanation: "Transparency and explainability are fundamental ethical principles that help users understand how AI systems make decisions and hold developers accountable for their outcomes."
+                }
+            ]
+        };
+
+        const lessons = {
+            1: {
+                title: "基礎知識與常見字彙 (Foundations & Vocabulary)",
+                content: `
+                    <h3 class="text-3xl font-bold mb-4">基礎知識與常見字彙</h3>
+                    <p class="text-lg text-slate-300 mb-8">This lesson covers the essential terms you need to understand the world of Generative AI. Mastering this vocabulary is the first step to discussing AI topics confidently.</p>
+                    
+                    <div class="bg-slate-900/70 rounded-xl p-6 mb-8 border border-slate-700">
+                        <h4 class="font-bold text-xl mb-5 text-blue-400">Key Terminology:</h4>
+                        <ul class="space-y-5 text-slate-300">
+                            <li>
+                                <strong class="text-white text-lg">Generative AI:</strong>
+                                <p class="pl-4 mt-1">AI that can create new and original content, such as text, images, music, and code.</p>
+                            </li>
+                            <li>
+                                <strong class="text-white text-lg">LLM (Large Language Model):</strong>
+                                <p class="pl-4 mt-1">A type of AI trained on vast amounts of text data to understand and generate human-like language.</p>
+                            </li>
+                            <li>
+                                <strong class="text-white text-lg">Prompt:</strong>
+                                <p class="pl-4 mt-1">An instruction or question given to an AI model to guide its response.</p>
+                            </li>
+                             <li>
+                                <strong class="text-white text-lg">Hallucination:</strong>
+                                <p class="pl-4 mt-1">An instance where an AI model generates information that is incorrect, nonsensical, or not based on its training data.</p>
+                            </li>
+                            <li>
+                                <strong class="text-white text-lg">Multimodal AI:</strong>
+                                <p class="pl-4 mt-1">AI systems that can process and understand information from multiple data types (modalities) like text, images, and audio.</p>
+                            </li>
+                            <li>
+                                <strong class="text-white text-lg">Fine-tuning:</strong>
+                                <p class="pl-4 mt-1">The process of further training a pre-trained model on a smaller, specific dataset to adapt it for a particular task.</p>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <p class="mb-10 text-slate-300">Understanding these terms will provide a solid foundation for exploring more advanced topics.</p>
+                    
+                    <div class="flex justify-center items-center mt-8">
+                        <button class="px-8 py-3 bg-blue-600 rounded-lg hover:bg-blue-500 transition-transform hover:scale-105" onclick="window.startQuiz(1)">Take Quiz</button>
+                    </div>
+                `
+            },
+            2: {
+                title: "Multimodal AI Systems",
+                content: `
+                    <h3 class="text-3xl font-bold mb-4">Multimodal AI Systems: Beyond Text</h3>
+                    <p class="text-lg text-slate-300 mb-8">Multimodal AI systems represent the next evolution, capable of processing and generating content across text, images, audio, and video.</p>
+                    
+                    <div class="bg-slate-900/70 rounded-xl p-6 mb-8 border border-slate-700">
+                        <h4 class="font-bold text-xl mb-5 text-purple-400">Key Concepts:</h4>
+                        <ul class="list-disc pl-5 space-y-3 text-slate-300">
+                            <li><strong>Cross-modal Understanding</strong> - The ability to connect concepts across different data types</li>
+                            <li><strong>Joint Embedding Spaces</strong> - Mathematical representations that unify different modalities</li>
+                            <li><strong>Emergent Capabilities</strong> - Unexpected abilities that arise from combining modalities</li>
+                            <li><strong>Chain-of-Thought Reasoning</strong> - Step-by-step problem-solving processes</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="flex justify-center my-10">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
+                            <div class="w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform"><i class="fas fa-font text-4xl text-white"></i></div>
+                            <div class="w-32 h-32 bg-gradient-to-br from-green-500 to-teal-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform"><i class="fas fa-image text-4xl text-white"></i></div>
+                            <div class="w-32 h-32 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform"><i class="fas fa-music text-4xl text-white"></i></div>
+                            <div class="w-32 h-32 bg-gradient-to-br from-red-500 to-rose-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform"><i class="fas fa-video text-4xl text-white"></i></div>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-xl mb-5">Industry Applications:</h4>
+                    <ul class="list-disc pl-5 space-y-3 text-slate-300 mb-10">
+                        <li>Content creation tools for marketing and design professionals</li>
+                        <li>Accessibility solutions for visually impaired users</li>
+                        <li>Educational platforms with interactive multimedia experiences</li>
+                    </ul>
+                    
+                    <div class="flex justify-between items-center mt-8">
+                        <button class="px-6 py-3 bg-slate-700 rounded-lg hover:bg-slate-600 transition-transform hover:scale-105" onclick="window.selectLesson(1)">Previous</button>
+                        <button class="px-8 py-3 bg-purple-600 rounded-lg hover:bg-purple-500 transition-transform hover:scale-105" onclick="window.startQuiz(2)">Take Quiz</button>
+                    </div>
+                `
+            },
+            3: {
+                title: "Ethical AI Development",
+                content: `
+                    <h3 class="text-3xl font-bold mb-4">Ethical AI Development: Navigating Responsibility</h3>
+                    <p class="text-lg text-slate-300 mb-8">As generative AI becomes more powerful, the importance of ethical development practices has never been greater.</p>
+                    
+                    <div class="bg-slate-900/70 rounded-xl p-6 mb-8 border border-slate-700">
+                        <h4 class="font-bold text-xl mb-5 text-green-400">Ethical Frameworks:</h4>
+                        <ul class="list-disc pl-5 space-y-3 text-slate-300">
+                            <li><strong>Fairness and Bias Mitigation</strong> - Ensuring equitable treatment across different groups</li>
+                            <li><strong>Transparency and Explainability</strong> - Making AI decision-making processes understandable</li>
+                            <li><strong>Privacy and Data Protection</strong> - Safeguarding user information and consent</li>
+                            <li><strong>Accountability and Governance</strong> - Establishing clear responsibility for AI outcomes</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="flex justify-center my-10">
+                        <div class="w-64 h-48 bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl flex flex-col items-center justify-center p-4 transform hover:scale-105 transition-transform">
+                            <i class="fas fa-balance-scale text-5xl text-white mb-4"></i>
+                            <span class="text-white font-bold text-center text-xl">Ethical AI Balance</span>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-xl mb-5">Current Initiatives:</h4>
+                    <ul class="list-disc pl-5 space-y-3 text-slate-300 mb-10">
+                        <li>Model cards documenting capabilities and limitations</li>
+                        <li>Red-teaming exercises to identify potential harms</li>
+                        <li>Constitutional AI approaches to align with human values</li>
+                    </ul>
+                    
+                    <div class="flex justify-between items-center mt-8">
+                        <button class="px-6 py-3 bg-slate-700 rounded-lg hover:bg-slate-600 transition-transform hover:scale-105" onclick="window.selectLesson(2)">Previous</button>
+                        <button class="px-8 py-3 bg-green-600 rounded-lg hover:bg-green-500 transition-transform hover:scale-105" onclick="window.startQuiz(3)">Take Quiz</button>
+                    </div>
+                `
+            }
+        };
+
+        // Chart explanations
+        const chartExplanations = {
+            1: "This timeline shows the exponential growth in AI research publications and the emergence of multimodal models over the past few years. The blue line represents the increasing number of AI research papers, while the purple line shows the rapid development of models that can process multiple types of data simultaneously.",
+            2: "This bar chart illustrates the relative capabilities of multimodal AI systems across different data types. Text processing remains the strongest capability, while video processing is still developing. The chart shows how AI systems are becoming more proficient at understanding and generating content across various media formats.",
+            3: "This doughnut chart represents the key components of ethical AI frameworks. Fairness takes the largest portion, emphasizing the importance of equitable treatment. Transparency and privacy are equally important, while accountability forms the foundation for responsible AI development."
+        };
+
+        // Chart.js global configuration
+        Chart.defaults.color = '#cbd5e1';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        // Function to destroy existing chart instance
+        function destroyChart() {
+            const container = document.getElementById('timeline-container');
+            const existingChart = Chart.getChart(container.querySelector('canvas'));
+            if (existingChart) {
+                existingChart.destroy();
+            }
+            container.innerHTML = '<canvas id="timeline-chart"></canvas>';
+        }
+
+        // Initialize timeline chart
+        function initTimelineChart() {
+            destroyChart();
+            const ctx = document.getElementById('timeline-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
+                    datasets: [{
+                        label: 'AI Research Publications',
+                        data: [2500, 3800, 5200, 7100, 9800, 13500, 18000],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#3b82f6',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Multimodal Models',
+                        data: [150, 420, 890, 1650, 2900, 4500, 6800],
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#8b5cf6',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { font: { size: 14 } } }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize multimodal chart for lesson 2
+        function initMultimodalChart() {
+            destroyChart();
+            const ctx = document.getElementById('timeline-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Text', 'Image', 'Audio', 'Video'],
+                    datasets: [{
+                        label: 'Processing Capability',
+                        data: [100, 90, 75, 65],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(139, 92, 246, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)'
+                        ],
+                        borderColor: [
+                            '#3b82f6', '#8b5cf6', '#10b981', '#f59e0b'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Multimodal Processing Capabilities',
+                            font: { size: 18 }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize ethical chart for lesson 3
+        function initEthicalChart() {
+            destroyChart();
+            const ctx = document.getElementById('timeline-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Fairness', 'Transparency', 'Privacy', 'Accountability'],
+                    datasets: [{
+                        label: 'Ethical Framework',
+                        data: [40, 25, 25, 10],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(245, 158, 11, 0.8)'
+                        ],
+                        borderColor: ['#0f172a'],
+                        borderWidth: 4,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 14 } }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Key Components of Ethical AI Frameworks',
+                            font: { size: 18 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Main function to select a lesson
+        window.selectLesson = function(lessonNumber) {
+            if (!lessons[lessonNumber]) {
+                console.error(`Lesson ${lessonNumber} not found.`);
+                return;
+            }
+
+            const lessonCards = document.querySelectorAll('.lesson-card');
+            lessonCards.forEach(card => card.classList.remove('active-lesson'));
+            document.getElementById(`lesson-${lessonNumber}`).classList.add('active-lesson');
+
+            const lessonContent = document.getElementById('lesson-content');
+            lessonContent.innerHTML = lessons[lessonNumber].content;
+            currentLesson = lessonNumber;
+            
+            lessonContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            const chartExplanation = document.getElementById('chart-explanation');
+            chartExplanation.querySelector('p').textContent = chartExplanations[lessonNumber];
+            if (lessonNumber === 1) initTimelineChart();
+            if (lessonNumber === 2) initMultimodalChart();
+            if (lessonNumber === 3) initEthicalChart();
+        };
+
+        // Function to start a quiz
+        window.startQuiz = function(lessonNumber) {
+            quizAnswers = {};
+            quizSubmitted[lessonNumber] = false;
+            const questions = quizQuestions[lessonNumber];
+            const quizHtml = `
+                <h3 class="text-3xl font-bold mb-8 text-center">Lesson ${lessonNumber} Quiz: ${lessons[lessonNumber].title.split('(')[0]}</h3>
+                <div id="quiz-questions">
+                    ${questions.map((q, index) => `
+                        <div class="mb-8" id="question-${index}">
+                            <p class="font-semibold text-xl mb-4">${index + 1}. ${q.question}</p>
+                            <div class="space-y-3">
+                                ${q.options.map((opt, optIndex) => `
+                                    <div class="quiz-option bg-slate-700/50 border-2 border-slate-600 rounded-lg p-4 cursor-pointer" onclick="selectAnswer(${lessonNumber}, ${index}, ${optIndex})">
+                                        <span>${opt}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="mt-4 p-4 rounded-lg bg-slate-900 text-slate-300 hidden" id="explanation-${index}"></div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="flex justify-center mt-10" id="quiz-button-container">
+                    <button id="submit-quiz-btn" class="px-8 py-3 bg-blue-600 rounded-lg hover:bg-blue-500 transition-transform hover:scale-105" onclick="submitQuiz(${lessonNumber})">Submit Answers</button>
+                </div>
+            `;
+            document.getElementById('lesson-content').innerHTML = quizHtml;
+        };
+
+        // Function to handle answer selection
+        window.selectAnswer = function(lessonNumber, questionIndex, optionIndex) {
+            if (quizSubmitted[lessonNumber]) return;
+
+            quizAnswers[questionIndex] = optionIndex;
+            const options = document.querySelectorAll(`#question-${questionIndex} .quiz-option`);
+            options.forEach((opt, i) => {
+                opt.classList.remove('selected');
+                if (i === optionIndex) {
+                    opt.classList.add('selected');
+                }
+            });
+        };
+
+        // Function to submit the quiz
+        window.submitQuiz = function(lessonNumber) {
+            if (quizSubmitted[lessonNumber]) return;
+
+            const questions = quizQuestions[lessonNumber];
+            questions.forEach((q, index) => {
+                const options = document.querySelectorAll(`#question-${index} .quiz-option`);
+                const explanationEl = document.getElementById(`explanation-${index}`);
+                explanationEl.innerHTML = `<strong class="text-white">Explanation:</strong> ${q.explanation}`;
+                explanationEl.classList.remove('hidden');
+
+                if (quizAnswers[index] === q.correct) {
+                    options[q.correct].classList.add('correct');
+                } else {
+                    if (quizAnswers[index] !== undefined) {
+                        options[quizAnswers[index]].classList.add('incorrect');
+                    }
+                    options[q.correct].classList.add('correct');
+                }
+            });
+
+            quizSubmitted[lessonNumber] = true;
+            
+            const buttonContainer = document.getElementById('quiz-button-container');
+            buttonContainer.innerHTML = ''; // Clear the submit button
+
+            const navButtonsContainer = document.createElement('div');
+            navButtonsContainer.className = 'flex justify-between items-center mt-10 w-full';
+
+            const backButtonHtml = `<button class="px-6 py-3 bg-slate-700 rounded-lg hover:bg-slate-600 transition-transform hover:scale-105" onclick="window.selectLesson(${lessonNumber})">回到本課內容</button>`;
+            
+            let forwardButtonHtml = '';
+            if (lessonNumber < 3) {
+                forwardButtonHtml = `<button class="px-8 py-3 bg-blue-600 rounded-lg hover:bg-blue-500 transition-transform hover:scale-105" onclick="window.selectLesson(${lessonNumber + 1})">開始下一課</button>`;
+            } else {
+                forwardButtonHtml = `<button class="px-8 py-3 bg-green-600 rounded-lg hover:bg-green-500 transition-transform hover:scale-105" onclick="window.location.reload()">從頭開始</button>`;
+            }
+
+            navButtonsContainer.innerHTML = backButtonHtml + forwardButtonHtml;
+            
+            const quizContainer = document.getElementById('quiz-questions').parentElement;
+            quizContainer.appendChild(navButtonsContainer);
+        };
+
+        // Initial setup on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initTimelineChart();
+        });
+    </script>
+</body>
+</html>
